@@ -150,7 +150,7 @@
             <!-- Badge statut Hors-ligne prêt -->
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-[11px] font-semibold">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>100% Pro CVC</span>
+                <span>Hors-ligne prêt</span>
             </div>
         </header>
 
@@ -382,13 +382,13 @@
             </section>
 
             <!-- ===================================================================== -->
-            <!-- ONGLET 2 : CALCULATEUR DE DÉBITS RÉGLEMENTAIRES (RSDT / CODE TRAVAIL) -->
+            <!-- ONGLET 2 : CALCULATEUR DE DÉBITS RÉGLEMENTAIRES (RSDT / COURS CVC)    -->
             <!-- ===================================================================== -->
             <section id="tab-rsdt" class="hidden space-y-4">
                 <div class="bg-dexCard border border-dexBorder rounded-2xl p-4 shadow-lg space-y-3">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h2 class="text-xs font-extrabold uppercase tracking-wider text-white">Débits Réglementaires (RSDT)</h2>
+                            <h2 class="text-xs font-extrabold uppercase tracking-wider text-white">Débits Ventilation (RSDT & Cours)</h2>
                             <p class="text-[11px] text-slate-400">Dimensionnement air neuf & extraction tertiaire</p>
                         </div>
                         <button type="button" onclick="loadCoworkingPreset()" class="px-2.5 py-1.5 rounded-lg bg-dexSurface hover:bg-slate-700 border border-dexBorder text-[11px] font-bold text-dexCyan">
@@ -401,12 +401,14 @@
                         <div class="grid grid-cols-1 gap-2">
                             <label for="rsdt-preset-type" class="text-[11px] font-semibold text-slate-300">Ajouter un local / équipement :</label>
                             <select id="rsdt-preset-type" class="w-full h-11 px-3 rounded-xl bg-dexSurface border border-dexBorder text-xs font-semibold text-white focus:outline-none focus:border-dexOrange">
-                                <option value="Open Space / Bureau|25|false">Open Space / Bureau (25 m³/h / pers.)</option>
-                                <option value="Salle de réunion|30|false">Salle de réunion (30 m³/h / pers.)</option>
-                                <option value="WC isolé (30 m³/h)|30|true">WC isolé / standard (30 m³/h / WC)</option>
-                                <option value="WC groupé (15 m³/h)|15|true">WC groupé (15 m³/h / équipement)</option>
-                                <option value="Salle de classe / Formation|18|false">Salle de formation / classe (18 m³/h / pers.)</option>
-                                <option value="Restaurant / Cafétéria|22|false">Restaurant / Cafétéria (22 m³/h / pers.)</option>
+                                <option value="Open Space (Confort 30 m³/h)|30|false">Open Space / Bureau confort (30 m³/h / pers.)</option>
+                                <option value="Open Space (Max 35 m³/h)|35|false">Open Space / Bureau renforcé (35 m³/h / pers.)</option>
+                                <option value="Open Space (Min RSDT 25 m³/h)|25|false">Open Space / Bureau min. RSDT (25 m³/h / pers.)</option>
+                                <option value="Salle de réunion (40 m³/h)|40|false">Salle de réunion standard (40 m³/h / pers.)</option>
+                                <option value="Salle de réunion (45 m³/h)|45|false">Salle de réunion haute densité (45 m³/h / pers.)</option>
+                                <option value="WC (Règle 60 m³/h)|60|true">WC tertiaire (60 m³/h / WC)</option>
+                                <option value="WC isolé RSDT (30 m³/h)|30|true">WC isolé min. RSDT (30 m³/h / WC)</option>
+                                <option value="Salle de formation (18 m³/h)|18|false">Salle de formation / classe (18 m³/h / pers.)</option>
                             </select>
                         </div>
                         <div class="flex items-center gap-2">
@@ -430,25 +432,36 @@
                             <label for="rsdt-sim-slider" class="text-xs font-semibold text-slate-300">
                                 Coeff. simultanéité <span class="text-[10px] text-slate-400">(hors WC)</span>
                             </label>
-                            <span id="rsdt-sim-display" class="px-2 py-0.5 rounded bg-dexSurface font-mono text-xs font-extrabold text-dexOrange">0.75 (75%)</span>
+                            <span id="rsdt-sim-display" class="px-2 py-0.5 rounded bg-dexSurface font-mono text-xs font-extrabold text-dexOrange">0.75 (-25%)</span>
                         </div>
                         <input type="range" id="rsdt-sim-slider" min="0.5" max="1.0" step="0.05" value="0.75" oninput="calculateRsdt()" class="w-full">
+                        <p class="text-[10px] text-slate-400 leading-snug">
+                            💡 Réduction de 25 à 50 % à coupler avec une ventilation à la demande (sondes <strong class="text-slate-200">CO₂</strong>).
+                        </p>
                     </div>
 
                     <!-- Bilan des débits et envoi vers l'aéraulique -->
-                    <div class="bg-dexBg border border-dexBorder rounded-xl p-3.5 space-y-2.5">
+                    <div class="bg-dexBg border border-dexBorder rounded-xl p-3.5 space-y-2">
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Débit brut total (100 %) :</span>
-                            <span id="rsdt-raw-total" class="font-mono font-bold text-slate-200">1 825 m³/h</span>
+                            <span class="text-slate-400">1. Open Space :</span>
+                            <span id="rsdt-openspace-total" class="font-mono font-bold text-slate-200">750 m³/h</span>
                         </div>
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Dont sanitaires (maintenus 100 %) :</span>
-                            <span id="rsdt-wc-total" class="font-mono font-bold text-dexCyan">90 m³/h</span>
+                            <span class="text-slate-400">2. Salles de réunion :</span>
+                            <span id="rsdt-meeting-total" class="font-mono font-bold text-slate-200">1 480 m³/h</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">3. Sanitaires / WC (100 %) :</span>
+                            <span id="rsdt-wc-total" class="font-mono font-bold text-dexCyan">180 m³/h</span>
+                        </div>
+                        <div class="flex justify-between text-xs pt-1.5 border-t border-dexBorder/60">
+                            <span class="text-slate-300 font-semibold">4. Débit total brut (100 %) :</span>
+                            <span id="rsdt-raw-total" class="font-mono font-extrabold text-white">2 410 m³/h</span>
                         </div>
                         <div class="pt-2 border-t border-dexBorder flex items-baseline justify-between">
-                            <span class="text-xs font-bold text-white">Débit d'extraction retenu :</span>
+                            <span class="text-xs font-bold text-white">5. Extraction avec simultanéité :</span>
                             <div class="text-right">
-                                <span id="rsdt-final-total" class="text-2xl font-mono font-extrabold text-emerald-400">1 394</span>
+                                <span id="rsdt-final-total" class="text-2xl font-mono font-extrabold text-emerald-400">1 853</span>
                                 <span class="text-xs font-mono font-bold text-slate-400">m³/h</span>
                             </div>
                         </div>
@@ -1012,16 +1025,18 @@
         }
 
         // ---------------------------------------------------------------------
-        // 3. CALCULATEUR DE DÉBITS RÉGLEMENTAIRES RSDT / CODE DU TRAVAIL
+        // 3. CALCULATEUR DE DÉBITS VENTILATION (COURS & RSDT)
         // ---------------------------------------------------------------------
+        // Cas pratique Module 5 aligné sur le corrigé du cours :
+        // Open space (25 pers × 30 m³/h = 750), Salles réunion (10+12+15 × 40 m³/h = 1 480), WC (3 × 60 m³/h = 180)
         let rsdtZones = [
-            { id: 1, name: 'Open Space', rate: 25, qty: 25, isSanitary: false },
-            { id: 2, name: 'Salle de réunion 1', rate: 30, qty: 10, isSanitary: false },
-            { id: 3, name: 'Salle de réunion 2', rate: 30, qty: 12, isSanitary: false },
-            { id: 4, name: 'Salle de réunion 3', rate: 30, qty: 15, isSanitary: false },
-            { id: 5, name: 'WC (3 cuvettes)', rate: 30, qty: 3, isSanitary: true }
+            { id: 1, name: 'Open Space', rate: 30, qty: 25, isSanitary: false },
+            { id: 2, name: 'Salle de réunion 1', rate: 40, qty: 10, isSanitary: false },
+            { id: 3, name: 'Salle de réunion 2', rate: 40, qty: 12, isSanitary: false },
+            { id: 4, name: 'Salle de réunion 3', rate: 40, qty: 15, isSanitary: false },
+            { id: 5, name: 'Sanitaires (3 WC)', rate: 60, qty: 3, isSanitary: true }
         ];
-        let rsdtFinalFlow = 1394;
+        let rsdtFinalFlow = 1853;
 
         function addRsdtZone() {
             const rawPreset = document.getElementById('rsdt-preset-type').value.split('|');
@@ -1044,15 +1059,15 @@
 
         function loadCoworkingPreset() {
             rsdtZones = [
-                { id: 1, name: 'Open Space', rate: 25, qty: 25, isSanitary: false },
-                { id: 2, name: 'Salle de réunion 1', rate: 30, qty: 10, isSanitary: false },
-                { id: 3, name: 'Salle de réunion 2', rate: 30, qty: 12, isSanitary: false },
-                { id: 4, name: 'Salle de réunion 3', rate: 30, qty: 15, isSanitary: false },
-                { id: 5, name: 'WC (3 cuvettes)', rate: 30, qty: 3, isSanitary: true }
+                { id: 1, name: 'Open Space', rate: 30, qty: 25, isSanitary: false },
+                { id: 2, name: 'Salle de réunion 1', rate: 40, qty: 10, isSanitary: false },
+                { id: 3, name: 'Salle de réunion 2', rate: 40, qty: 12, isSanitary: false },
+                { id: 4, name: 'Salle de réunion 3', rate: 40, qty: 15, isSanitary: false },
+                { id: 5, name: 'Sanitaires (3 WC)', rate: 60, qty: 3, isSanitary: true }
             ];
             document.getElementById('rsdt-sim-slider').value = 0.75;
             renderRsdtZones();
-            showToast("Cas pratique Coworking chargé");
+            showToast("Cas pratique Coworking (Cours Module 5) chargé");
         }
 
         function renderRsdtZones() {
@@ -1069,7 +1084,7 @@
                                 <div class="text-[10px] font-mono text-slate-400">${z.qty} × ${z.rate} m³/h ${z.isSanitary ? '• <span class="text-dexCyan">Sanitaire (100%)</span>' : ''}</div>
                             </div>
                             <div class="flex items-center gap-2.5">
-                                <span class="text-xs font-mono font-extrabold text-dexOrange">${flow} m³/h</span>
+                                <span class="text-xs font-mono font-extrabold text-dexOrange">${flow.toLocaleString('fr-FR')} m³/h</span>
                                 <button type="button" onclick="removeRsdtZone(${z.id})" class="w-6 h-6 rounded-lg bg-dexSurface text-slate-400 hover:text-red-400 flex items-center justify-center text-xs font-bold">×</button>
                             </div>
                         </div>
@@ -1081,22 +1096,37 @@
 
         function calculateRsdt() {
             const sim = parseFloat(document.getElementById('rsdt-sim-slider').value) || 1.0;
-            document.getElementById('rsdt-sim-display').textContent = `${sim.toFixed(2)} (${Math.round(sim * 100)}%)`;
+            const reductionPct = Math.round((1 - sim) * 100);
+            document.getElementById('rsdt-sim-display').textContent = reductionPct > 0
+                ? `${sim.toFixed(2)} (-${reductionPct}%)`
+                : `1.00 (100%)`;
 
-            let occupancyFlow = 0;
+            let openSpaceFlow = 0;
+            let meetingFlow = 0;
+            let otherOccFlow = 0;
             let sanitaryFlow = 0;
 
             rsdtZones.forEach(z => {
                 const q = z.rate * z.qty;
-                if (z.isSanitary) sanitaryFlow += q;
-                else occupancyFlow += q;
+                if (z.isSanitary) {
+                    sanitaryFlow += q;
+                } else if (z.name.toLowerCase().includes('open space')) {
+                    openSpaceFlow += q;
+                } else if (z.name.toLowerCase().includes('réunion')) {
+                    meetingFlow += q;
+                } else {
+                    otherOccFlow += q;
+                }
             });
 
+            const occupancyFlow = openSpaceFlow + meetingFlow + otherOccFlow;
             const rawTotal = occupancyFlow + sanitaryFlow;
             rsdtFinalFlow = Math.round((occupancyFlow * sim) + sanitaryFlow);
 
-            document.getElementById('rsdt-raw-total').textContent = `${rawTotal.toLocaleString('fr-FR')} m³/h`;
+            document.getElementById('rsdt-openspace-total').textContent = `${openSpaceFlow.toLocaleString('fr-FR')} m³/h`;
+            document.getElementById('rsdt-meeting-total').textContent = `${(meetingFlow + otherOccFlow).toLocaleString('fr-FR')} m³/h`;
             document.getElementById('rsdt-wc-total').textContent = `${sanitaryFlow.toLocaleString('fr-FR')} m³/h`;
+            document.getElementById('rsdt-raw-total').textContent = `${rawTotal.toLocaleString('fr-FR')} m³/h`;
             document.getElementById('rsdt-final-total').textContent = rsdtFinalFlow.toLocaleString('fr-FR');
         }
 
@@ -1108,7 +1138,7 @@
             }
             switchMobileTab('aeraulique');
             calculateAeraulique();
-            showToast(`Débit de ${flow} m³/h transféré vers l'aéraulique !`);
+            showToast(`Débit de ${flow.toLocaleString('fr-FR')} m³/h transféré vers l'aéraulique !`);
         }
 
         // ---------------------------------------------------------------------
@@ -1238,9 +1268,7 @@
         }
 
         // ---------------------------------------------------------------------
-        // 4. MODALE CATALOGUE, PRESSE-PAPIERS & PWA MANIFEST DYNAMIQUE
-        // ---------------------------------------------------------------------
-        // 4. MODALE CATALOGUE, PRESSE-PAPIERS & PWA (SERVICE WORKER + INSTALL)
+        // 5. MODALE CATALOGUE, PRESSE-PAPIERS & PWA (SERVICE WORKER + INSTALL)
         // ---------------------------------------------------------------------
         let deferredInstallPrompt = null;
 
