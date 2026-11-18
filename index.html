@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Balises Meta PWA & Mobile App Native -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B1120">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CVC Dexforma">
+    
+    <!-- Icône Application SVG encodée en Data-URI (Aucun fichier image externe requis) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230B1120'/%3E%3Crect x='24' y='24' width='464' height='464' rx='92' fill='none' stroke='%23EA580C' stroke-width='20'/%3E%3Ctext x='256' y='235' font-family='sans-serif' font-weight='900' font-size='145' fill='%23EA580C' text-anchor='middle'%3ECVC%3C/text%3E%3Ctext x='256' y='345' font-family='sans-serif' font-weight='800' font-size='64' fill='%23F8FAFC' text-anchor='middle' letter-spacing='6'%3EDEXFORMA%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%230B1120'/%3E%3Crect x='32' y='32' width='448' height='448' rx='80' fill='none' stroke='%23EA580C' stroke-width='24'/%3E%3Ctext x='256' y='235' font-family='sans-serif' font-weight='900' font-size='145' fill='%23EA580C' text-anchor='middle'%3ECVC%3C/text%3E%3Ctext x='256' y='345' font-family='sans-serif' font-weight='800' font-size='64' fill='%23F8FAFC' text-anchor='middle' letter-spacing='6'%3EDEXFORMA%3C/text%3E%3C/svg%3E">
+    
+    <title>Boîte à outils CVC - DEXFORMA</title>
+    
+    <!-- Polices Inter & JetBrains Mono pour la lisibilité technique sur chantier -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        dexBg: '#0B1120',
+                        dexCard: '#111827',
+                        dexSurface: '#1E293B',
+                        dexBorder: '#334155',
+                        dexOrange: '#EA580C',
+                        dexOrangeHover: '#F97316',
+                        dexCyan: '#38BDF8',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Correction critique du scroll mobile & Google Sites */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: auto !important;
+            min-height: 100%;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            background-color: #060A13;
+            color: #F8FAFC;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Conteneur centré mobile-first sans blocage de hauteur */
+        .app-shell {
+            background-color: #0B1120;
+            height: auto !important;
+            min-height: 100vh;
+            overflow: visible !important;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.85);
+        }
+        /* Personnalisation du curseur tactile (Slider) */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 8px;
+            border-radius: 999px;
+            background: #1E293B;
+            border: 1px solid #334155;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            background: #EA580C;
+            border: 3px solid #F8FAFC;
+            margin-top: -10px;
+            box-shadow: 0 2px 10px rgba(234, 88, 12, 0.5);
+        }
+        input[type="range"]::-moz-range-track {
+            height: 8px;
+            border-radius: 999px;
+            background: #1E293B;
+            border: 1px solid #334155;
+        }
+        input[type="range"]::-moz-range-thumb {
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #EA580C;
+            border: 3px solid #F8FAFC;
+            box-shadow: 0 2px 10px rgba(234, 88, 12, 0.5);
+        }
+        /* Masquer les flèches natives des inputs numériques */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-dexOrange selection:text-white flex justify-center">
+
+    <!-- Toast de notification discret -->
+    <div id="toast-box" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 opacity-0 -translate-y-2"></div>
+
+    <!-- Coque Mobile Native (Max 480px sur desktop, 100% sur mobile) -->
+    <div class="app-shell w-full max-w-md border-x border-dexBorder/60 flex flex-col relative pb-24">
+
+        <!-- 1. HEADER FIXE DE L'APPLICATION -->
+        <header class="sticky top-0 z-30 bg-dexBg/95 backdrop-blur-md border-b border-dexBorder px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="px-2 py-1 rounded-lg bg-dexOrange text-white font-extrabold text-xs tracking-wider shadow-md shadow-orange-950/60">
+                    DEXFORMA
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-base font-extrabold text-white tracking-tight leading-none">
+                        Boîte à outils CVC
+                    </h1>
+                    <span class="text-[10px] text-slate-400 font-medium">Génie Climatique • Terrain</span>
+                </div>
+            </div>
+
+            <!-- Badge statut Hors-ligne prêt -->
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-[11px] font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Hors-ligne prêt</span>
+            </div>
+        </header>
+
+        <!-- ZONE DE CONTENU DYNAMIQUE -->
+        <main class="flex-1 px-4 pt-4 space-y-4">
+
+            <!-- ===================================================================== -->
+            <!-- ONGLET 1 : RÈGLE À CALCUL AÉRAULIQUE                                  -->
+            <!-- ===================================================================== -->
+            <section id="tab-aeraulique" class="space-y-4">
+
+                <!-- Carte 1 : Paramètres de la gaine & débit -->
+                <div class="bg-dexCard border border-dexBorder rounded-2xl p-4 shadow-lg space-y-4">
+                    
+                    <!-- Sélecteur de forme : Circulaire vs Rectangulaire -->
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                            1. Forme du conduit aéraulique
+                        </label>
+                        <div class="grid grid-cols-2 gap-2 bg-dexBg p-1 rounded-xl border border-dexBorder">
+                            <button type="button" id="btn-shape-circ" onclick="setDuctShape('circ')" class="py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all bg-dexOrange text-white shadow">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke-width="2.2"></circle></svg>
+                                <span>Circulaire (Ø)</span>
+                            </button>
+                            <button type="button" id="btn-shape-rect" onclick="setDuctShape('rect')" class="py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all text-slate-400 hover:text-white">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2" stroke-width="2.2"></rect></svg>
+                                <span>Rectangulaire</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dimensions Circulaires -->
+                    <div id="input-circ-group">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="select-diameter" class="text-xs font-semibold text-slate-300">Diamètre normalisé (mm)</label>
+                            <span class="text-[11px] font-mono text-dexCyan" id="circ-section-badge">Ø 200 mm</span>
+                        </div>
+                        <select id="select-diameter" onchange="calculateAeraulique()" class="w-full h-12 px-3.5 rounded-xl bg-dexSurface border border-dexBorder text-white font-mono font-bold text-base focus:outline-none focus:border-dexOrange">
+                            <option value="80">Ø 80 mm</option>
+                            <option value="100">Ø 100 mm</option>
+                            <option value="125">Ø 125 mm</option>
+                            <option value="160">Ø 160 mm</option>
+                            <option value="200" selected>Ø 200 mm</option>
+                            <option value="250">Ø 250 mm</option>
+                            <option value="315">Ø 315 mm</option>
+                            <option value="355">Ø 355 mm</option>
+                            <option value="400">Ø 400 mm</option>
+                            <option value="450">Ø 450 mm</option>
+                            <option value="500">Ø 500 mm</option>
+                            <option value="560">Ø 560 mm</option>
+                            <option value="630">Ø 630 mm</option>
+                            <option value="710">Ø 710 mm</option>
+                            <option value="800">Ø 800 mm</option>
+                            <option value="900">Ø 900 mm</option>
+                            <option value="1000">Ø 1000 mm</option>
+                        </select>
+                    </div>
+
+                    <!-- Dimensions Rectangulaires (Masqué par défaut) -->
+                    <div id="input-rect-group" class="hidden space-y-2.5">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="input-rect-a" class="block text-xs font-semibold text-slate-300 mb-1">Largeur a (mm)</label>
+                                <input type="number" id="input-rect-a" value="400" min="50" max="3000" step="10" oninput="calculateAeraulique()" class="w-full h-12 px-3 rounded-xl bg-dexSurface border border-dexBorder text-white font-mono font-bold text-base text-center focus:outline-none focus:border-dexOrange">
+                            </div>
+                            <div>
+                                <label for="input-rect-b" class="block text-xs font-semibold text-slate-300 mb-1">Hauteur b (mm)</label>
+                                <input type="number" id="input-rect-b" value="200" min="50" max="3000" step="10" oninput="calculateAeraulique()" class="w-full h-12 px-3 rounded-xl bg-dexSurface border border-dexBorder text-white font-mono font-bold text-base text-center focus:outline-none focus:border-dexOrange">
+                            </div>
+                        </div>
+                        <div class="bg-dexBg/90 border border-dexBorder rounded-lg px-3 py-2 flex items-center justify-between">
+                            <span class="text-[11px] text-slate-400">Diamètre équivalent (Huebscher) :</span>
+                            <span id="rect-deq-display" class="text-xs font-mono font-bold text-dexCyan">Øéq 307 mm</span>
+                        </div>
+                    </div>
+
+                    <!-- Saisie du Débit d'air (m³/h) + Boutons rapides + Curseur -->
+                    <div class="pt-2 border-t border-dexBorder/70">
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="input-airflow" class="text-xs font-semibold text-slate-300">Débit d'air (m³/h)</label>
+                            <span id="airflow-ls-hint" class="text-[11px] font-mono text-slate-400">= 138.9 l/s</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="adjustAirflow(-100)" class="h-12 px-3.5 rounded-xl bg-dexSurface active:bg-slate-700 border border-dexBorder text-white font-mono font-bold text-sm shrink-0 select-none">
+                                -100
+                            </button>
+                            <div class="relative flex-1">
+                                <input type="number" id="input-airflow" value="500" min="10" max="50000" step="10" oninput="syncAirflowFromInput()" class="w-full h-12 px-3 pr-12 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-extrabold text-xl text-center focus:outline-none focus:border-dexOrange">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">m³/h</span>
+                            </div>
+                            <button type="button" onclick="adjustAirflow(100)" class="h-12 px-3.5 rounded-xl bg-dexSurface active:bg-slate-700 border border-dexBorder text-white font-mono font-bold text-sm shrink-0 select-none">
+                                +100
+                            </button>
+                        </div>
+                        <!-- Curseur rapide 50 à 15 000 m³/h -->
+                        <div class="mt-3 px-1">
+                            <input type="range" id="slider-airflow" min="50" max="15000" step="50" value="500" oninput="syncAirflowFromSlider()" class="w-full">
+                            <div class="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+                                <span>50</span>
+                                <span>5 000</span>
+                                <span>10 000</span>
+                                <span>15 000 m³/h</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sélecteur Matériau / Rugosité -->
+                    <div class="pt-2 border-t border-dexBorder/70">
+                        <label for="select-material" class="block text-xs font-semibold text-slate-300 mb-1.5">Matériau & Rugosité (k)</label>
+                        <select id="select-material" onchange="calculateAeraulique()" class="w-full h-11 px-3 rounded-xl bg-dexSurface border border-dexBorder text-xs font-semibold text-slate-200 focus:outline-none focus:border-dexOrange">
+                            <option value="0.15" selected>Acier galvanisé rigide (k = 0.15 mm)</option>
+                            <option value="1.0">Gaine flexible Alu / PVC (k = 1.00 mm)</option>
+                            <option value="0.05">Conduit isolé lisse / Textile (k = 0.05 mm)</option>
+                        </select>
+                    </div>
+
+                    <!-- Sélecteur Zone du réseau (Seuils acoustiques adaptés) -->
+                    <div class="pt-2 border-t border-dexBorder/70">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Zone du réseau (Critère acoustique)</label>
+                        <div class="grid grid-cols-3 gap-1.5 bg-dexBg p-1 rounded-xl border border-dexBorder">
+                            <button type="button" id="btn-zone-main" onclick="setNetworkZone('main')" class="py-2 px-1.5 rounded-lg text-[11px] font-bold transition-all bg-dexOrange text-white shadow">
+                                Principale
+                            </button>
+                            <button type="button" id="btn-zone-sec" onclick="setNetworkZone('sec')" class="py-2 px-1.5 rounded-lg text-[11px] font-bold transition-all text-slate-400 hover:text-white">
+                                Secondaire
+                            </button>
+                            <button type="button" id="btn-zone-term" onclick="setNetworkZone('term')" class="py-2 px-1.5 rounded-lg text-[11px] font-bold transition-all text-slate-400 hover:text-white">
+                                Bouche
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carte 2 : Résultats Instantanés Chantier -->
+                <div class="bg-dexCard border border-dexBorder rounded-2xl p-4 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">RÉSULTATS INSTANTANÉS (AIR 20°C)</span>
+                        <button type="button" onclick="copyAerauliqueSummary()" class="text-[11px] font-semibold text-dexCyan hover:underline flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            <span>Copier</span>
+                        </button>
+                    </div>
+
+                    <!-- Vitesse de l'air (KPI Principal + Jauge) -->
+                    <div class="bg-dexBg border border-dexBorder rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs font-semibold text-slate-400">Vitesse de l'air</span>
+                            <span id="vel-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                                Confort (Gaine principale)
+                            </span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span id="res-velocity" class="text-4xl font-mono font-extrabold text-emerald-400 tracking-tight">4.42</span>
+                            <span class="text-sm font-mono font-bold text-slate-400">m/s</span>
+                        </div>
+
+                        <!-- Jauge visuelle avec repères dynamiques selon la zone -->
+                        <div class="mt-3">
+                            <div class="w-full h-3 bg-dexSurface rounded-full overflow-hidden relative border border-dexBorder">
+                                <div id="vel-gauge-bar" class="h-full bg-emerald-500 transition-all duration-200" style="width: 44%;"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+                                <span>0 m/s</span>
+                                <span id="gauge-comfort-label" class="text-emerald-400/80">5.0 (Confort)</span>
+                                <span id="gauge-max-label" class="text-amber-400/80">7.0 (Max)</span>
+                                <span>10+</span>
+                            </div>
+                        </div>
+
+                        <!-- Suggestion automatique du diamètre normalisé optimal -->
+                        <div id="optimal-diameter-box" class="mt-3 pt-2.5 border-t border-dexBorder/70 flex items-center justify-between gap-2">
+                            <div class="text-[11px] text-slate-300">
+                                <span class="text-slate-400">Diamètre optimal :</span>
+                                <strong id="optimal-diameter-val" class="font-mono text-dexCyan">Ø 200 mm</strong>
+                            </div>
+                            <button type="button" id="btn-apply-optimal" onclick="applyOptimalDiameter()" class="px-2.5 py-1 rounded-lg bg-dexOrange/15 hover:bg-dexOrange/25 border border-dexOrange/40 text-dexOrange text-[11px] font-bold transition-colors">
+                                Appliquer
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Grille 3 indicateurs secondaires : ΔP/L, Pd, Section -->
+                    <div class="grid grid-cols-3 gap-2.5">
+                        <!-- Perte de charge linéaire -->
+                        <div class="bg-dexBg border border-dexBorder rounded-xl p-3 text-center">
+                            <div class="text-[10px] font-semibold text-slate-400 uppercase">Perte ΔP/L</div>
+                            <div id="res-dp" class="text-lg font-mono font-extrabold text-dexOrange mt-1">1.15</div>
+                            <div class="text-[10px] font-mono text-slate-500">Pa/m</div>
+                        </div>
+
+                        <!-- Pression dynamique -->
+                        <div class="bg-dexBg border border-dexBorder rounded-xl p-3 text-center">
+                            <div class="text-[10px] font-semibold text-slate-400 uppercase">Pression Pd</div>
+                            <div id="res-pd" class="text-lg font-mono font-extrabold text-white mt-1">11.8</div>
+                            <div class="text-[10px] font-mono text-slate-500">Pa</div>
+                        </div>
+
+                        <!-- Section de passage -->
+                        <div class="bg-dexBg border border-dexBorder rounded-xl p-3 text-center">
+                            <div class="text-[10px] font-semibold text-slate-400 uppercase">Section</div>
+                            <div id="res-area" class="text-lg font-mono font-extrabold text-dexCyan mt-1">314</div>
+                            <div id="res-area-unit" class="text-[10px] font-mono text-slate-500">cm²</div>
+                        </div>
+                    </div>
+
+                    <!-- Tableau comparatif : Diamètres voisins (uniquement en mode circulaire) -->
+                    <div id="neighbors-card" class="pt-2 border-t border-dexBorder/70">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                            Comparatif diamètres voisins (au même débit)
+                        </div>
+                        <div class="overflow-hidden rounded-xl border border-dexBorder">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-dexSurface text-[10px] font-bold uppercase text-slate-400 border-b border-dexBorder">
+                                        <th class="py-2 px-3">Diamètre</th>
+                                        <th class="py-2 px-3 text-right">Vitesse</th>
+                                        <th class="py-2 px-3 text-right">Perte ΔP/L</th>
+                                        <th class="py-2 px-2 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="neighbors-tbody" class="divide-y divide-dexBorder/60 text-xs font-mono">
+                                    <!-- Rempli par JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- ONGLET 2 : CALCULATEUR DE DÉBITS RÉGLEMENTAIRES (RSDT / CODE TRAVAIL) -->
+            <!-- ===================================================================== -->
+            <section id="tab-rsdt" class="hidden space-y-4">
+                <div class="bg-dexCard border border-dexBorder rounded-2xl p-4 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xs font-extrabold uppercase tracking-wider text-white">Débits Réglementaires (RSDT)</h2>
+                            <p class="text-[11px] text-slate-400">Dimensionnement air neuf & extraction tertiaire</p>
+                        </div>
+                        <button type="button" onclick="loadCoworkingPreset()" class="px-2.5 py-1.5 rounded-lg bg-dexSurface hover:bg-slate-700 border border-dexBorder text-[11px] font-bold text-dexCyan">
+                            Exemple Coworking
+                        </button>
+                    </div>
+
+                    <!-- Ajout rapide d'une zone -->
+                    <div class="p-3 rounded-xl bg-dexBg border border-dexBorder space-y-2.5">
+                        <div class="grid grid-cols-1 gap-2">
+                            <label for="rsdt-preset-type" class="text-[11px] font-semibold text-slate-300">Ajouter un local / équipement :</label>
+                            <select id="rsdt-preset-type" class="w-full h-11 px-3 rounded-xl bg-dexSurface border border-dexBorder text-xs font-semibold text-white focus:outline-none focus:border-dexOrange">
+                                <option value="Open Space / Bureau|25|false">Open Space / Bureau (25 m³/h / pers.)</option>
+                                <option value="Salle de réunion|30|false">Salle de réunion (30 m³/h / pers.)</option>
+                                <option value="WC isolé (30 m³/h)|30|true">WC isolé / standard (30 m³/h / WC)</option>
+                                <option value="WC groupé (15 m³/h)|15|true">WC groupé (15 m³/h / équipement)</option>
+                                <option value="Salle de classe / Formation|18|false">Salle de formation / classe (18 m³/h / pers.)</option>
+                                <option value="Restaurant / Cafétéria|22|false">Restaurant / Cafétéria (22 m³/h / pers.)</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="flex-1">
+                                <input type="number" id="rsdt-qty" value="10" min="1" max="500" placeholder="Effectif / Qté" class="w-full h-11 px-3 rounded-xl bg-dexSurface border border-dexBorder text-white font-mono font-bold text-sm text-center focus:outline-none focus:border-dexOrange">
+                            </div>
+                            <button type="button" onclick="addRsdtZone()" class="h-11 px-4 rounded-xl bg-dexOrange hover:bg-dexOrangeHover text-white text-xs font-extrabold shadow flex items-center gap-1.5">
+                                <span>+ Ajouter</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Liste des zones ajoutées -->
+                    <div id="rsdt-zones-list" class="space-y-2">
+                        <!-- Rempli dynamiquement par JS -->
+                    </div>
+
+                    <!-- Coefficient de simultanéité (hors sanitaires) -->
+                    <div class="pt-2 border-t border-dexBorder/70 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label for="rsdt-sim-slider" class="text-xs font-semibold text-slate-300">
+                                Coeff. simultanéité <span class="text-[10px] text-slate-400">(hors WC)</span>
+                            </label>
+                            <span id="rsdt-sim-display" class="px-2 py-0.5 rounded bg-dexSurface font-mono text-xs font-extrabold text-dexOrange">0.75 (75%)</span>
+                        </div>
+                        <input type="range" id="rsdt-sim-slider" min="0.5" max="1.0" step="0.05" value="0.75" oninput="calculateRsdt()" class="w-full">
+                    </div>
+
+                    <!-- Bilan des débits et envoi vers l'aéraulique -->
+                    <div class="bg-dexBg border border-dexBorder rounded-xl p-3.5 space-y-2.5">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">Débit brut total (100 %) :</span>
+                            <span id="rsdt-raw-total" class="font-mono font-bold text-slate-200">1 825 m³/h</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">Dont sanitaires (maintenus 100 %) :</span>
+                            <span id="rsdt-wc-total" class="font-mono font-bold text-dexCyan">90 m³/h</span>
+                        </div>
+                        <div class="pt-2 border-t border-dexBorder flex items-baseline justify-between">
+                            <span class="text-xs font-bold text-white">Débit d'extraction retenu :</span>
+                            <div class="text-right">
+                                <span id="rsdt-final-total" class="text-2xl font-mono font-extrabold text-emerald-400">1 394</span>
+                                <span class="text-xs font-mono font-bold text-slate-400">m³/h</span>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="sendRsdtToAeraulique()" class="w-full py-2.5 px-4 rounded-xl bg-dexOrange hover:bg-dexOrangeHover text-white text-xs font-extrabold tracking-wide shadow-lg flex items-center justify-center gap-2 transition-all">
+                            <span>Envoyer vers le dimensionnement gaine</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- ONGLET 3 : CONVERTISSEUR D'UNITÉS CVC INSTANTANÉ                      -->
+            <!-- ===================================================================== -->
+            <section id="tab-convertisseur" class="hidden space-y-4">
+
+                <!-- Barre de préréglages rapides chantier -->
+                <div class="bg-dexCard border border-dexBorder rounded-2xl p-3.5 shadow-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Valeurs fréquentes chantier</span>
+                        <button type="button" onclick="resetConverters()" class="text-[11px] font-bold text-dexOrange hover:underline">
+                            Réinitialiser tout
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="applyPreset('flow', 1500)" class="py-2 px-2 rounded-xl bg-dexSurface active:bg-slate-700 border border-dexBorder text-xs font-mono font-bold text-white">
+                            1 500 m³/h
+                        </button>
+                        <button type="button" onclick="applyPreset('press', 100)" class="py-2 px-2 rounded-xl bg-dexSurface active:bg-slate-700 border border-dexBorder text-xs font-mono font-bold text-white">
+                            100 Pa
+                        </button>
+                        <button type="button" onclick="applyPreset('power', 10)" class="py-2 px-2 rounded-xl bg-dexSurface active:bg-slate-700 border border-dexBorder text-xs font-mono font-bold text-white">
+                            10 kW
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Carte 1 : Débit d'air -->
+                <div class="bg-dexCard border border-dexBorder rounded-2xl p-4 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-dexCyan"></span>
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-white">Débit d'air (Ventilation)</h2>
+                        </div>
+                        <button type="button" onclick="clearGroup('flow')" class="text-[11px] text-slate-400 hover:text-white">Effacer</button>
+                    </div>
+                    <div class="grid grid-cols-1 gap-2.5">
+                        <div class="relative">
+                            <input type="number" id="conv-m3h" placeholder="0" oninput="convertFlow('m3h')" class="w-full h-12 pl-3.5 pr-16 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-base focus:outline-none focus:border-dexOrange">
+                            <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-dexCyan">m³/h</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="relative">
+                                <input type="number" id="conv-ls" placeholder="0" oninput="convertFlow('ls')" class="w-full h-12 pl-2.5 pr-9 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-xs focus:outline-none focus:border-dexOrange">
+                                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">l/s</span>
+                            </div>
+                            <div class="relative">
+                                <input type="number" id="conv-m3s" placeholder="0" oninput="convertFlow('m3s')" class="w-full h-12 pl-2.5 pr-11 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-xs focus:outline-none focus:border-dexOrange">
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">m³/s</span>
+                            </div>
+                            <div class="relative">
+                                <input type="number" id="conv-cfm" placeholder="0" oninput="convertFlow('cfm')" class="w-full h-12 pl-2.5 pr-10 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-xs focus:outline-none focus:border-dexOrange">
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">CFM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carte 2 : Pression -->
+                <div class="bg-dexCard border border-dexBorder rounded-2xl p-4 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-dexOrange"></span>
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-white">Pression (Aéraulique & Hydro)</h2>
+                        </div>
+                        <button type="button" onclick="clearGroup('press')" class="text-[11px] text-slate-400 hover:text-white">Effacer</button>
+                    </div>
+                    <div class="space-y-2.5">
+                        <div class="relative">
+                            <input type="number" id="conv-pa" placeholder="0" oninput="convertPressure('pa')" class="w-full h-12 pl-3.5 pr-16 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-base focus:outline-none focus:border-dexOrange">
+                            <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-dexOrange">Pa</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div class="relative">
+                                <input type="number" id="conv-mmce" placeholder="0" oninput="convertPressure('mmce')" class="w-full h-11 pl-3 pr-14 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-sm focus:outline-none focus:border-dexOrange">
+                                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">mmCE</span>
+                            </div>
+                            <div class="relative">
+                                <input type="number" id="conv-dapa" placeholder="0" oninput="convertPressure('dapa')" class="w-full h-11 pl-3 pr-14 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-sm focus:outline-none focus:border-dexOrange">
+                                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">daPa</span>
+                            </div>
+                            <div class="relative">
+                                <input type="number" id="conv-mbar" placeholder="0" oninput="convertPressure('mbar')" class="w-full h-11 pl-3 pr-14 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-sm focus:outline-none focus:border-dexOrange">
+                                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">mbar</span>
+                            </div>
+                            <div class="relative">
+                                <input type="number" id="conv-bar" placeholder="0" oninput="convertPressure('bar')" class="w-full h-11 pl-3 pr-12 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-sm focus:outline-none focus:border-dexOrange">
+                                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">bar</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carte 3 : Puissance Thermique -->
+                <div class="bg-dexCard border border-dexBorder rounded-2xl p-4 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-white">Puissance Thermique & Frigo</h2>
+                        </div>
+                        <button type="button" onclick="clearGroup('power')" class="text-[11px] text-slate-400 hover:text-white">Effacer</button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div class="relative">
+                            <input type="number" id="conv-kw" placeholder="0" oninput="convertPower('kw')" class="w-full h-12 pl-3 pr-12 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-base focus:outline-none focus:border-dexOrange">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-emerald-400">kW</span>
+                        </div>
+                        <div class="relative">
+                            <input type="number" id="conv-w" placeholder="0" oninput="convertPower('w')" class="w-full h-12 pl-3 pr-10 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-sm focus:outline-none focus:border-dexOrange">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">W</span>
+                        </div>
+                        <div class="relative">
+                            <input type="number" id="conv-kcal" placeholder="0" oninput="convertPower('kcal')" class="w-full h-11 pl-3 pr-16 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-sm focus:outline-none focus:border-dexOrange">
+                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">kcal/h</span>
+                        </div>
+                        <div class="relative">
+                            <input type="number" id="conv-btu" placeholder="0" oninput="convertPower('btu')" class="w-full h-11 pl-3 pr-16 rounded-xl bg-dexBg border border-dexBorder text-white font-mono font-bold text-sm focus:outline-none focus:border-dexOrange">
+                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">BTU/h</span>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- 4. BANDEAU DE CONVERSION DEXFORMA (DISCRET ET PRO SUR CHAQUE ONGLET)  -->
+            <!-- ===================================================================== -->
+            <div class="bg-gradient-to-r from-dexCard to-dexSurface border border-dexBorder rounded-2xl p-4 shadow-lg">
+                <div class="flex items-start gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-dexOrange/15 border border-dexOrange/30 flex items-center justify-center shrink-0 mt-0.5">
+                        <svg class="w-5 h-5 text-dexOrange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-xs font-semibold text-slate-200 leading-snug">
+                            <span class="text-dexOrange font-bold">Formation CVC en ligne - Dexforma :</span> Maîtrisez le dimensionnement et l'équilibrage aéraulique
+                        </p>
+                        <button type="button" onclick="openCatalogModal()" class="mt-2.5 w-full py-2 px-3 rounded-xl bg-dexOrange hover:bg-dexOrangeHover text-white text-xs font-bold tracking-wide transition-colors flex items-center justify-center gap-1.5 shadow">
+                            <span>Découvrir le catalogue</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================================================================== -->
+            <!-- 5. BANDEAU INTELLIGENT D'INSTALLATION PWA (ANDROID & IPHONE/SAFARI)   -->
+            <!-- ===================================================================== -->
+            <div id="pwa-install-card" class="bg-dexCard border border-dexOrange/40 rounded-2xl p-4 shadow-lg space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-dexOrange animate-ping"></span>
+                        <h3 class="text-xs font-extrabold uppercase tracking-wider text-dexOrange">
+                            Installer l'App sur votre téléphone
+                        </h3>
+                    </div>
+                    <button type="button" onclick="dismissInstallCard()" class="text-[11px] text-slate-500 hover:text-slate-300 px-1.5 py-0.5">
+                        Masquer
+                    </button>
+                </div>
+
+                <!-- Zone Bouton Direct Android / Chrome (Affiché automatiquement si beforeinstallprompt déclenché) -->
+                <div id="pwa-android-install-zone" class="hidden">
+                    <p class="text-xs text-slate-300 mb-2.5 leading-relaxed">
+                        Ajoutez la boîte à outils CVC Dexforma sur votre écran d'accueil pour un accès instantané en sous-sol sans connexion.
+                    </p>
+                    <button type="button" id="btn-trigger-pwa-install" onclick="triggerNativePWAInstall()" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold tracking-wide shadow-lg flex items-center justify-center gap-2 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>Installer l'application (1 clic • Gratuit)</span>
+                    </button>
+                </div>
+
+                <!-- Zone Instructions Manuelles (iPhone Safari & Navigateurs standards) -->
+                <div id="pwa-manual-guide-zone" class="space-y-2 text-[11px] text-slate-300 leading-relaxed">
+                    <div id="guide-ios" class="p-2.5 rounded-xl bg-dexBg border border-dexBorder flex items-start gap-2.5">
+                        <span class="px-1.5 py-0.5 rounded bg-dexSurface text-white font-bold text-[10px] shrink-0 mt-0.5">iPhone</span>
+                        <p>
+                            Sur <strong class="text-white">Safari</strong>, appuyez sur le bouton <strong class="text-dexCyan">Partager</strong> <span class="inline-block px-1 bg-dexSurface rounded text-white font-mono">↑</span> en bas de l'écran, puis choisissez <strong class="text-white">« Sur l'écran d'accueil »</strong>.
+                        </p>
+                    </div>
+                    <div id="guide-android" class="p-2.5 rounded-xl bg-dexBg border border-dexBorder flex items-start gap-2.5">
+                        <span class="px-1.5 py-0.5 rounded bg-dexSurface text-white font-bold text-[10px] shrink-0 mt-0.5">Android</span>
+                        <p>
+                            Sur <strong class="text-white">Chrome</strong>, ouvrez le menu <strong class="text-dexCyan">⋮</strong> en haut à droite et appuyez sur <strong class="text-white">« Installer l'application »</strong> ou <strong class="text-white">« Ajouter à l'écran d'accueil »</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- BARRE DE NAVIGATION INFÉRIEURE FIXE (TYPE APP NATIVE iOS / ANDROID) -->
+        <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-40 bg-dexCard/95 backdrop-blur-md border-t border-dexBorder px-2 py-2 grid grid-cols-3 gap-1.5">
+            <button type="button" id="nav-btn-aeraulique" onclick="switchMobileTab('aeraulique')" class="py-2 px-2 rounded-xl flex flex-col items-center justify-center gap-1 bg-dexOrange/15 text-dexOrange border border-dexOrange/30 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                <span class="text-[10px] font-bold tracking-tight">Aéraulique</span>
+            </button>
+
+            <button type="button" id="nav-btn-rsdt" onclick="switchMobileTab('rsdt')" class="py-2 px-2 rounded-xl flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-white border border-transparent transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-[10px] font-bold tracking-tight">Débits RSDT</span>
+            </button>
+
+            <button type="button" id="nav-btn-convertisseur" onclick="switchMobileTab('convertisseur')" class="py-2 px-2 rounded-xl flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-white border border-transparent transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                <span class="text-[10px] font-bold tracking-tight">Convertisseur</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- MODALE CATALOGUE DEXFORMA (Sans quitter l'app) -->
+    <div id="catalog-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+        <div class="bg-dexCard border border-dexBorder rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-dexBorder pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded bg-dexOrange text-white font-extrabold text-[11px]">DEXFORMA</span>
+                    <h3 class="text-sm font-bold text-white">Formations CVC & Génie Climatique</h3>
+                </div>
+                <button type="button" onclick="closeCatalogModal()" class="p-1.5 rounded-lg bg-dexSurface text-slate-400 hover:text-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Développez vos compétences terrain avec nos parcours 100% opérationnels dédiés aux techniciens, metteurs au point et bureaux d'études :
+            </p>
+            <ul class="space-y-2 text-xs">
+                <li class="p-2.5 rounded-xl bg-dexBg border border-dexBorder flex items-center justify-between">
+                    <span class="font-semibold text-white">• Dimensionnement & Équilibrage Aéraulique</span>
+                    <span class="text-dexCyan font-mono text-[11px]">E-learning</span>
+                </li>
+                <li class="p-2.5 rounded-xl bg-dexBg border border-dexBorder flex items-center justify-between">
+                    <span class="font-semibold text-white">• Régulation PID & GTB du Bâtiment</span>
+                    <span class="text-dexCyan font-mono text-[11px]">E-learning</span>
+                </li>
+                <li class="p-2.5 rounded-xl bg-dexBg border border-dexBorder flex items-center justify-between">
+                    <span class="font-semibold text-white">• Maintenance & Dépannage PAC / Climatisation</span>
+                    <span class="text-dexCyan font-mono text-[11px]">E-learning</span>
+                </li>
+            </ul>
+            <div class="pt-2 flex gap-2">
+                <button type="button" onclick="closeCatalogModal()" class="flex-1 py-2.5 rounded-xl bg-dexSurface text-slate-300 text-xs font-bold border border-dexBorder">
+                    Fermer
+                </button>
+                <a href="https://www.dexforma.fr" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 rounded-xl bg-dexOrange hover:bg-dexOrangeHover text-white text-xs font-bold text-center">
+                    Voir le site Dexforma →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- LOGIQUE MÉTIER, CALCULS PHYSIQUES & PWA                               -->
+    <!-- ===================================================================== -->
+    <script>
+        // Constantes physiques de l'air standard à 20°C (Niveau de la mer)
+        const AIR_DENSITY = 1.204;       // ρ (kg/m³)
+        const AIR_VISCOSITY = 1.51e-5;   // ν (m²/s)
+        const STANDARD_DIAMETERS = [80, 100, 125, 160, 200, 250, 315, 355, 400, 450, 500, 560, 630, 710, 800, 900, 1000];
+
+        // Seuils de vitesse recommandés (m/s) selon la zone du réseau
+        const NETWORK_ZONES = {
+            main: { label: 'Gaine principale', comfort: 5.0, max: 7.0, target: 4.5 },
+            sec:  { label: 'Gaine secondaire', comfort: 3.5, max: 5.0, target: 3.2 },
+            term: { label: 'Bouche / Diffuseur', comfort: 2.2, max: 3.0, target: 2.0 }
+        };
+
+        let currentShape = 'circ';
+        let currentZone = 'main';
+        let recommendedDiameter = 200;
+
+        // ---------------------------------------------------------------------
+        // 1. NAVIGATION ONGLETS MOBILES (3 ONGLETS)
+        // ---------------------------------------------------------------------
+        function switchMobileTab(tabName) {
+            const tabs = {
+                aeraulique: { sec: document.getElementById('tab-aeraulique'), btn: document.getElementById('nav-btn-aeraulique') },
+                rsdt: { sec: document.getElementById('tab-rsdt'), btn: document.getElementById('nav-btn-rsdt') },
+                convertisseur: { sec: document.getElementById('tab-convertisseur'), btn: document.getElementById('nav-btn-convertisseur') }
+            };
+
+            const activeClass = "py-2 px-2 rounded-xl flex flex-col items-center justify-center gap-1 bg-dexOrange/15 text-dexOrange border border-dexOrange/30 transition-all";
+            const inactiveClass = "py-2 px-2 rounded-xl flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-white border border-transparent transition-all";
+
+            Object.keys(tabs).forEach(key => {
+                if (key === tabName) {
+                    tabs[key].sec.classList.remove('hidden');
+                    tabs[key].btn.className = activeClass;
+                } else {
+                    tabs[key].sec.classList.add('hidden');
+                    tabs[key].btn.className = inactiveClass;
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ---------------------------------------------------------------------
+        // 2. LOGIQUE RÈGLE À CALCUL AÉRAULIQUE (DARCY-WEISBACH / COLEBROOK)
+        // ---------------------------------------------------------------------
+        function setNetworkZone(zone) {
+            currentZone = zone;
+            ['main', 'sec', 'term'].forEach(z => {
+                const btn = document.getElementById(`btn-zone-${z}`);
+                if (z === zone) {
+                    btn.className = "py-2 px-1.5 rounded-lg text-[11px] font-bold transition-all bg-dexOrange text-white shadow";
+                } else {
+                    btn.className = "py-2 px-1.5 rounded-lg text-[11px] font-bold transition-all text-slate-400 hover:text-white";
+                }
+            });
+            const cfg = NETWORK_ZONES[zone];
+            document.getElementById('gauge-comfort-label').textContent = `${cfg.comfort.toFixed(1)} (Confort)`;
+            document.getElementById('gauge-max-label').textContent = `${cfg.max.toFixed(1)} (Max)`;
+            calculateAeraulique();
+        }
+
+        function setDuctShape(shape) {
+            currentShape = shape;
+            const btnCirc = document.getElementById('btn-shape-circ');
+            const btnRect = document.getElementById('btn-shape-rect');
+            const groupCirc = document.getElementById('input-circ-group');
+            const groupRect = document.getElementById('input-rect-group');
+            const neighborsCard = document.getElementById('neighbors-card');
+
+            if (shape === 'circ') {
+                btnCirc.className = "py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all bg-dexOrange text-white shadow";
+                btnRect.className = "py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all text-slate-400 hover:text-white";
+                groupCirc.classList.remove('hidden');
+                groupRect.classList.add('hidden');
+                neighborsCard.classList.remove('hidden');
+            } else {
+                btnRect.className = "py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all bg-dexOrange text-white shadow";
+                btnCirc.className = "py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all text-slate-400 hover:text-white";
+                groupRect.classList.remove('hidden');
+                groupCirc.classList.add('hidden');
+                neighborsCard.classList.add('hidden');
+            }
+            calculateAeraulique();
+        }
+
+        function syncAirflowFromSlider() {
+            const sliderVal = document.getElementById('slider-airflow').value;
+            document.getElementById('input-airflow').value = sliderVal;
+            calculateAeraulique();
+        }
+
+        function syncAirflowFromInput() {
+            let val = parseFloat(document.getElementById('input-airflow').value) || 0;
+            if (val >= 50 && val <= 15000) {
+                document.getElementById('slider-airflow').value = val;
+            }
+            calculateAeraulique();
+        }
+
+        function adjustAirflow(delta) {
+            const input = document.getElementById('input-airflow');
+            let current = parseFloat(input.value) || 0;
+            let next = Math.max(10, current + delta);
+            input.value = next;
+            if (next >= 50 && next <= 15000) {
+                document.getElementById('slider-airflow').value = next;
+            }
+            calculateAeraulique();
+        }
+
+        /**
+         * Résolution numérique de l'équation implicite de Colebrook-White
+         * pour le coefficient de perte de charge linéaire λ (lambda).
+         */
+        function computeFrictionFactor(reynolds, relativeRoughness) {
+            if (reynolds <= 0) return 0;
+            if (reynolds < 2300) {
+                return 64 / reynolds; // Régime laminaire
+            }
+            // Approximation initiale de Swamee-Jain
+            let f = 0.25 / Math.pow(Math.log10((relativeRoughness / 3.7) + (5.74 / Math.pow(reynolds, 0.9))), 2);
+            // Affinage par itérations de Colebrook-White
+            for (let i = 0; i < 6; i++) {
+                const rhs = -2.0 * Math.log10((relativeRoughness / 3.7) + (2.51 / (reynolds * Math.sqrt(f))));
+                f = 1.0 / (rhs * rhs);
+            }
+            return f;
+        }
+
+        /**
+         * Calcul complet pour un conduit circulaire de diamètre D_mm (en mm)
+         * et un débit Q_m3h (en m³/h) avec rugosité k_mm (en mm).
+         */
+        function computeDuctMetrics(Q_m3h, D_mm, k_mm, actualArea_m2 = null) {
+            const Q_m3s = Q_m3h / 3600;
+            const D_m = D_mm / 1000;
+            const area_m2 = actualArea_m2 !== null ? actualArea_m2 : (Math.PI * Math.pow(D_m, 2)) / 4;
+            const velocity = area_m2 > 0 ? Q_m3s / area_m2 : 0;
+            const pd = 0.5 * AIR_DENSITY * Math.pow(velocity, 2);
+
+            const reynolds = (velocity * D_m) / AIR_VISCOSITY;
+            const relRoughness = (k_mm / 1000) / D_m;
+            const lambda = computeFrictionFactor(reynolds, relRoughness);
+
+            // Perte de charge linéaire ΔP/L = λ * (1 / D) * Pd
+            const dp_m = D_m > 0 ? lambda * (1 / D_m) * pd : 0;
+
+            return { velocity, dp_m, pd, area_m2 };
+        }
+
+        function calculateAeraulique() {
+            const Q_m3h = Math.max(0, parseFloat(document.getElementById('input-airflow').value) || 0);
+            const k_mm = parseFloat(document.getElementById('select-material').value) || 0.15;
+
+            // Affichage débit équivalent en l/s
+            document.getElementById('airflow-ls-hint').textContent = `= ${(Q_m3h / 3.6).toFixed(1)} l/s`;
+
+            let calcDiameter_mm = 200;
+            let actualArea_m2 = null;
+
+            if (currentShape === 'circ') {
+                calcDiameter_mm = parseFloat(document.getElementById('select-diameter').value) || 200;
+                document.getElementById('circ-section-badge').textContent = `Ø ${calcDiameter_mm} mm`;
+            } else {
+                const a_mm = Math.max(20, parseFloat(document.getElementById('input-rect-a').value) || 400);
+                const b_mm = Math.max(20, parseFloat(document.getElementById('input-rect-b').value) || 200);
+                // Formule de Huebscher pour le diamètre équivalent aéraulique
+                calcDiameter_mm = 1.30 * Math.pow(a_mm * b_mm, 0.625) / Math.pow(a_mm + b_mm, 0.25);
+                actualArea_m2 = (a_mm / 1000) * (b_mm / 1000);
+                document.getElementById('rect-deq-display').textContent = `Øéq ${Math.round(calcDiameter_mm)} mm`;
+            }
+
+            const res = computeDuctMetrics(Q_m3h, calcDiameter_mm, k_mm, actualArea_m2);
+            const zoneCfg = NETWORK_ZONES[currentZone];
+
+            // Recherche automatique du diamètre normalisé optimal pour la zone choisie
+            recommendedDiameter = STANDARD_DIAMETERS[STANDARD_DIAMETERS.length - 1];
+            for (const d of STANDARD_DIAMETERS) {
+                const testM = computeDuctMetrics(Q_m3h, d, k_mm);
+                if (testM.velocity <= zoneCfg.comfort) {
+                    recommendedDiameter = d;
+                    break;
+                }
+            }
+            document.getElementById('optimal-diameter-val').textContent = `Ø ${recommendedDiameter} mm`;
+            const applyBtn = document.getElementById('btn-apply-optimal');
+            if (currentShape === 'circ' && calcDiameter_mm === recommendedDiameter) {
+                applyBtn.textContent = "Optimal ✓";
+                applyBtn.className = "px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-bold";
+            } else {
+                applyBtn.textContent = "Appliquer";
+                applyBtn.className = "px-2.5 py-1 rounded-lg bg-dexOrange/15 hover:bg-dexOrange/25 border border-dexOrange/40 text-dexOrange text-[11px] font-bold transition-colors";
+            }
+
+            // Mise à jour Vitesse + Code Couleur dynamique selon la zone + Jauge
+            const velEl = document.getElementById('res-velocity');
+            const badgeEl = document.getElementById('vel-status-badge');
+            const gaugeEl = document.getElementById('vel-gauge-bar');
+
+            velEl.textContent = res.velocity.toFixed(2);
+            const gaugePct = Math.min(100, (res.velocity / 10) * 100);
+            gaugeEl.style.width = `${gaugePct}%`;
+
+            if (res.velocity <= zoneCfg.comfort) {
+                velEl.className = "text-4xl font-mono font-extrabold text-emerald-400 tracking-tight";
+                badgeEl.textContent = `Confort (${zoneCfg.label})`;
+                badgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30";
+                gaugeEl.className = "h-full bg-emerald-500 transition-all duration-200";
+            } else if (res.velocity <= zoneCfg.max) {
+                velEl.className = "text-4xl font-mono font-extrabold text-amber-400 tracking-tight";
+                badgeEl.textContent = "Vigilance acoustique";
+                badgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30";
+                gaugeEl.className = "h-full bg-amber-500 transition-all duration-200";
+            } else {
+                velEl.className = "text-4xl font-mono font-extrabold text-red-400 tracking-tight";
+                badgeEl.textContent = "Vitesse excessive / Bruit";
+                badgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/30";
+                gaugeEl.className = "h-full bg-red-500 transition-all duration-200";
+            }
+
+            // Mise à jour ΔP/L, Pd et Section
+            document.getElementById('res-dp').textContent = res.dp_m < 10 ? res.dp_m.toFixed(2) : res.dp_m.toFixed(1);
+            document.getElementById('res-pd').textContent = res.pd.toFixed(1);
+
+            const areaCm2 = res.area_m2 * 10000;
+            if (areaCm2 >= 10000) {
+                document.getElementById('res-area').textContent = res.area_m2.toFixed(2);
+                document.getElementById('res-area-unit').textContent = "m²";
+            } else {
+                document.getElementById('res-area').textContent = Math.round(areaCm2);
+                document.getElementById('res-area-unit').textContent = "cm²";
+            }
+
+            // Mise à jour tableau des diamètres voisins (mode circulaire)
+            if (currentShape === 'circ') {
+                updateNeighborsTable(Q_m3h, calcDiameter_mm, k_mm);
+            }
+        }
+
+        function updateNeighborsTable(Q_m3h, currentD, k_mm) {
+            const idx = STANDARD_DIAMETERS.indexOf(currentD);
+            const tbody = document.getElementById('neighbors-tbody');
+            const candidateIndices = [idx - 1, idx, idx + 1].filter(i => i >= 0 && i < STANDARD_DIAMETERS.length);
+            const zoneCfg = NETWORK_ZONES[currentZone];
+
+            tbody.innerHTML = candidateIndices.map(i => {
+                const d = STANDARD_DIAMETERS[i];
+                const m = computeDuctMetrics(Q_m3h, d, k_mm);
+                const isCurrent = d === currentD;
+
+                let velColor = "text-emerald-400";
+                if (m.velocity > zoneCfg.max) velColor = "text-red-400";
+                else if (m.velocity > zoneCfg.comfort) velColor = "text-amber-400";
+
+                return `
+                    <tr class="${isCurrent ? 'bg-dexOrange/10' : 'bg-dexBg/60'}">
+                        <td class="py-2.5 px-3 font-bold ${isCurrent ? 'text-dexOrange' : 'text-white'}">
+                            Ø ${d} mm ${isCurrent ? '<span class="text-[9px] uppercase ml-1">(Actuel)</span>' : ''}
+                        </td>
+                        <td class="py-2.5 px-3 text-right font-bold ${velColor}">${m.velocity.toFixed(2)} m/s</td>
+                        <td class="py-2.5 px-3 text-right text-slate-300">${m.dp_m.toFixed(2)} Pa/m</td>
+                        <td class="py-2.5 px-2 text-center">
+                            ${isCurrent 
+                                ? '<span class="text-[10px] text-slate-500">—</span>' 
+                                : `<button type="button" onclick="selectNeighborDiameter(${d})" class="px-2 py-1 rounded bg-dexSurface hover:bg-slate-700 text-[10px] font-sans font-bold text-dexCyan border border-dexBorder">Choisir</button>`
+                            }
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function selectNeighborDiameter(d) {
+            document.getElementById('select-diameter').value = d;
+            calculateAeraulique();
+            showToast(`Diamètre Ø ${d} mm sélectionné`);
+        }
+
+        function applyOptimalDiameter() {
+            setDuctShape('circ');
+            document.getElementById('select-diameter').value = recommendedDiameter;
+            calculateAeraulique();
+            showToast(`Diamètre optimal Ø ${recommendedDiameter} mm appliqué`);
+        }
+
+        function copyAerauliqueSummary() {
+            const Q = document.getElementById('input-airflow').value;
+            const vel = document.getElementById('res-velocity').textContent;
+            const dp = document.getElementById('res-dp').textContent;
+            const pd = document.getElementById('res-pd').textContent;
+            const dimLabel = currentShape === 'circ'
+                ? `Ø ${document.getElementById('select-diameter').value} mm`
+                : `${document.getElementById('input-rect-a').value}x${document.getElementById('input-rect-b').value} mm (${document.getElementById('rect-deq-display').textContent})`;
+
+            const text = `DEXFORMA CVC - Dimensionnement Aéraulique :\n• Conduit : ${dimLabel}\n• Débit : ${Q} m³/h\n• Vitesse : ${vel} m/s\n• Perte linéaire : ${dp} Pa/m | Pd : ${pd} Pa`;
+            copyTextSafe(text);
+        }
+
+        // ---------------------------------------------------------------------
+        // 3. CALCULATEUR DE DÉBITS RÉGLEMENTAIRES RSDT / CODE DU TRAVAIL
+        // ---------------------------------------------------------------------
+        let rsdtZones = [
+            { id: 1, name: 'Open Space', rate: 25, qty: 25, isSanitary: false },
+            { id: 2, name: 'Salle de réunion 1', rate: 30, qty: 10, isSanitary: false },
+            { id: 3, name: 'Salle de réunion 2', rate: 30, qty: 12, isSanitary: false },
+            { id: 4, name: 'Salle de réunion 3', rate: 30, qty: 15, isSanitary: false },
+            { id: 5, name: 'WC (3 cuvettes)', rate: 30, qty: 3, isSanitary: true }
+        ];
+        let rsdtFinalFlow = 1394;
+
+        function addRsdtZone() {
+            const rawPreset = document.getElementById('rsdt-preset-type').value.split('|');
+            const qty = Math.max(1, parseInt(document.getElementById('rsdt-qty').value) || 1);
+            rsdtZones.push({
+                id: Date.now(),
+                name: rawPreset[0],
+                rate: parseFloat(rawPreset[1]),
+                qty: qty,
+                isSanitary: rawPreset[2] === 'true'
+            });
+            renderRsdtZones();
+            showToast("Zone ajoutée au bilan aéraulique");
+        }
+
+        function removeRsdtZone(id) {
+            rsdtZones = rsdtZones.filter(z => z.id !== id);
+            renderRsdtZones();
+        }
+
+        function loadCoworkingPreset() {
+            rsdtZones = [
+                { id: 1, name: 'Open Space', rate: 25, qty: 25, isSanitary: false },
+                { id: 2, name: 'Salle de réunion 1', rate: 30, qty: 10, isSanitary: false },
+                { id: 3, name: 'Salle de réunion 2', rate: 30, qty: 12, isSanitary: false },
+                { id: 4, name: 'Salle de réunion 3', rate: 30, qty: 15, isSanitary: false },
+                { id: 5, name: 'WC (3 cuvettes)', rate: 30, qty: 3, isSanitary: true }
+            ];
+            document.getElementById('rsdt-sim-slider').value = 0.75;
+            renderRsdtZones();
+            showToast("Cas pratique Coworking chargé");
+        }
+
+        function renderRsdtZones() {
+            const list = document.getElementById('rsdt-zones-list');
+            if (rsdtZones.length === 0) {
+                list.innerHTML = `<div class="text-center py-3 text-xs text-slate-500">Aucune zone ajoutée. Utilisez le formulaire ci-dessus.</div>`;
+            } else {
+                list.innerHTML = rsdtZones.map(z => {
+                    const flow = z.rate * z.qty;
+                    return `
+                        <div class="p-2.5 rounded-xl bg-dexBg border border-dexBorder flex items-center justify-between gap-2">
+                            <div>
+                                <div class="text-xs font-bold text-white">${z.name}</div>
+                                <div class="text-[10px] font-mono text-slate-400">${z.qty} × ${z.rate} m³/h ${z.isSanitary ? '• <span class="text-dexCyan">Sanitaire (100%)</span>' : ''}</div>
+                            </div>
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-xs font-mono font-extrabold text-dexOrange">${flow} m³/h</span>
+                                <button type="button" onclick="removeRsdtZone(${z.id})" class="w-6 h-6 rounded-lg bg-dexSurface text-slate-400 hover:text-red-400 flex items-center justify-center text-xs font-bold">×</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            calculateRsdt();
+        }
+
+        function calculateRsdt() {
+            const sim = parseFloat(document.getElementById('rsdt-sim-slider').value) || 1.0;
+            document.getElementById('rsdt-sim-display').textContent = `${sim.toFixed(2)} (${Math.round(sim * 100)}%)`;
+
+            let occupancyFlow = 0;
+            let sanitaryFlow = 0;
+
+            rsdtZones.forEach(z => {
+                const q = z.rate * z.qty;
+                if (z.isSanitary) sanitaryFlow += q;
+                else occupancyFlow += q;
+            });
+
+            const rawTotal = occupancyFlow + sanitaryFlow;
+            rsdtFinalFlow = Math.round((occupancyFlow * sim) + sanitaryFlow);
+
+            document.getElementById('rsdt-raw-total').textContent = `${rawTotal.toLocaleString('fr-FR')} m³/h`;
+            document.getElementById('rsdt-wc-total').textContent = `${sanitaryFlow.toLocaleString('fr-FR')} m³/h`;
+            document.getElementById('rsdt-final-total').textContent = rsdtFinalFlow.toLocaleString('fr-FR');
+        }
+
+        function sendRsdtToAeraulique() {
+            const flow = Math.max(10, rsdtFinalFlow);
+            document.getElementById('input-airflow').value = flow;
+            if (flow >= 50 && flow <= 15000) {
+                document.getElementById('slider-airflow').value = flow;
+            }
+            switchMobileTab('aeraulique');
+            calculateAeraulique();
+            showToast(`Débit de ${flow} m³/h transféré vers l'aéraulique !`);
+        }
+
+        // ---------------------------------------------------------------------
+        // 4. LOGIQUE CONVERTISSEUR D'UNITÉS CVC BIDIRECTIONNEL
+        // ---------------------------------------------------------------------
+        function formatSmartNumber(num) {
+            if (isNaN(num) || num === 0) return "";
+            if (Math.abs(num) >= 1000) return parseFloat(num.toFixed(1));
+            if (Math.abs(num) >= 10) return parseFloat(num.toFixed(2));
+            if (Math.abs(num) >= 0.1) return parseFloat(num.toFixed(3));
+            return parseFloat(num.toFixed(5));
+        }
+
+        // Débit : 1 m³/h = 1/3.6 l/s = 1/3600 m³/s = 0.588577779 CFM
+        function convertFlow(source) {
+            const elM3h = document.getElementById('conv-m3h');
+            const elLs = document.getElementById('conv-ls');
+            const elM3s = document.getElementById('conv-m3s');
+            const elCfm = document.getElementById('conv-cfm');
+
+            const raw = parseFloat(document.getElementById(`conv-${source}`).value);
+            if (isNaN(raw)) {
+                if (source !== 'm3h') elM3h.value = '';
+                if (source !== 'ls') elLs.value = '';
+                if (source !== 'm3s') elM3s.value = '';
+                if (source !== 'cfm') elCfm.value = '';
+                return;
+            }
+
+            let m3h = 0;
+            if (source === 'm3h') m3h = raw;
+            else if (source === 'ls') m3h = raw * 3.6;
+            else if (source === 'm3s') m3h = raw * 3600;
+            else if (source === 'cfm') m3h = raw * 1.6990108;
+
+            if (source !== 'm3h') elM3h.value = formatSmartNumber(m3h);
+            if (source !== 'ls') elLs.value = formatSmartNumber(m3h / 3.6);
+            if (source !== 'm3s') elM3s.value = formatSmartNumber(m3h / 3600);
+            if (source !== 'cfm') elCfm.value = formatSmartNumber(m3h / 1.6990108);
+        }
+
+        // Pression : 1 mmCE = 9.80665 Pa | 1 daPa = 10 Pa | 1 mbar = 100 Pa | 1 bar = 100 000 Pa
+        function convertPressure(source) {
+            const elPa = document.getElementById('conv-pa');
+            const elMmce = document.getElementById('conv-mmce');
+            const elDapa = document.getElementById('conv-dapa');
+            const elMbar = document.getElementById('conv-mbar');
+            const elBar = document.getElementById('conv-bar');
+
+            const raw = parseFloat(document.getElementById(`conv-${source}`).value);
+            if (isNaN(raw)) {
+                ['pa', 'mmce', 'dapa', 'mbar', 'bar'].forEach(u => {
+                    if (u !== source) document.getElementById(`conv-${u}`).value = '';
+                });
+                return;
+            }
+
+            let pa = 0;
+            if (source === 'pa') pa = raw;
+            else if (source === 'mmce') pa = raw * 9.80665;
+            else if (source === 'dapa') pa = raw * 10;
+            else if (source === 'mbar') pa = raw * 100;
+            else if (source === 'bar') pa = raw * 100000;
+
+            if (source !== 'pa') elPa.value = formatSmartNumber(pa);
+            if (source !== 'mmce') elMmce.value = formatSmartNumber(pa / 9.80665);
+            if (source !== 'dapa') elDapa.value = formatSmartNumber(pa / 10);
+            if (source !== 'mbar') elMbar.value = formatSmartNumber(pa / 100);
+            if (source !== 'bar') elBar.value = formatSmartNumber(pa / 100000);
+        }
+
+        // Puissance : 1 kW = 1000 W = 859.845 kcal/h = 3412.142 BTU/h
+        function convertPower(source) {
+            const elKw = document.getElementById('conv-kw');
+            const elW = document.getElementById('conv-w');
+            const elKcal = document.getElementById('conv-kcal');
+            const elBtu = document.getElementById('conv-btu');
+
+            const raw = parseFloat(document.getElementById(`conv-${source}`).value);
+            if (isNaN(raw)) {
+                ['kw', 'w', 'kcal', 'btu'].forEach(u => {
+                    if (u !== source) document.getElementById(`conv-${u}`).value = '';
+                });
+                return;
+            }
+
+            let kw = 0;
+            if (source === 'kw') kw = raw;
+            else if (source === 'w') kw = raw / 1000;
+            else if (source === 'kcal') kw = raw / 859.8452279;
+            else if (source === 'btu') kw = raw / 3412.141633;
+
+            if (source !== 'kw') elKw.value = formatSmartNumber(kw);
+            if (source !== 'w') elW.value = formatSmartNumber(kw * 1000);
+            if (source !== 'kcal') elKcal.value = formatSmartNumber(kw * 859.8452279);
+            if (source !== 'btu') elBtu.value = formatSmartNumber(kw * 3412.141633);
+        }
+
+        function clearGroup(group) {
+            const map = {
+                flow: ['conv-m3h', 'conv-ls', 'conv-m3s', 'conv-cfm'],
+                press: ['conv-pa', 'conv-mmce', 'conv-dapa', 'conv-mbar', 'conv-bar'],
+                power: ['conv-kw', 'conv-w', 'conv-kcal', 'conv-btu']
+            };
+            (map[group] || []).forEach(id => document.getElementById(id).value = '');
+        }
+
+        function resetConverters() {
+            clearGroup('flow');
+            clearGroup('press');
+            clearGroup('power');
+            showToast("Convertisseurs réinitialisés");
+        }
+
+        function applyPreset(type, val) {
+            if (type === 'flow') {
+                document.getElementById('conv-m3h').value = val;
+                convertFlow('m3h');
+            } else if (type === 'press') {
+                document.getElementById('conv-pa').value = val;
+                convertPressure('pa');
+            } else if (type === 'power') {
+                document.getElementById('conv-kw').value = val;
+                convertPower('kw');
+            }
+            showToast(`Valeur prédéfinie appliquée`);
+        }
+
+        // ---------------------------------------------------------------------
+        // 4. MODALE CATALOGUE, PRESSE-PAPIERS & PWA MANIFEST DYNAMIQUE
+        // ---------------------------------------------------------------------
+        // 4. MODALE CATALOGUE, PRESSE-PAPIERS & PWA (SERVICE WORKER + INSTALL)
+        // ---------------------------------------------------------------------
+        let deferredInstallPrompt = null;
+
+        function openCatalogModal() {
+            document.getElementById('catalog-modal').classList.remove('hidden');
+        }
+        function closeCatalogModal() {
+            document.getElementById('catalog-modal').classList.add('hidden');
+        }
+
+        function dismissInstallCard() {
+            const card = document.getElementById('pwa-install-card');
+            if (card) card.classList.add('hidden');
+        }
+
+        function copyTextSafe(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast("Résultats copiés dans le presse-papiers !");
+            } catch (e) {
+                showToast("Copie impossible sur ce navigateur");
+            }
+            document.body.removeChild(ta);
+        }
+
+        function showToast(msg) {
+            const box = document.getElementById('toast-box');
+            box.innerHTML = `
+                <div class="px-4 py-2 rounded-full bg-dexSurface border border-dexOrange/50 text-white text-xs font-semibold shadow-2xl flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-dexOrange"></span>
+                    <span>${msg}</span>
+                </div>
+            `;
+            box.classList.remove('opacity-0', '-translate-y-2');
+            box.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => {
+                box.classList.remove('opacity-100', 'translate-y-0');
+                box.classList.add('opacity-0', '-translate-y-2');
+            }, 2200);
+        }
+
+        // Détection de l'installation native sur Android / Chrome (beforeinstallprompt)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            const androidZone = document.getElementById('pwa-android-install-zone');
+            const guideAndroid = document.getElementById('guide-android');
+            if (androidZone) androidZone.classList.remove('hidden');
+            if (guideAndroid) guideAndroid.classList.add('hidden');
+        });
+
+        // Déclenchement de la boîte de dialogue native d'installation
+        async function triggerNativePWAInstall() {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            const { outcome } = await deferredInstallPrompt.userChoice;
+            if (outcome === 'accepted') {
+                showToast("Application CVC Dexforma installée !");
+                dismissInstallCard();
+            }
+            deferredInstallPrompt = null;
+        }
+
+        // Masquer le bandeau si l'app est déjà ouverte en mode installé (standalone)
+        function checkStandaloneMode() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (isStandalone) {
+                dismissInstallCard();
+                return;
+            }
+            // Adaptation visuelle selon l'OS détecté (iOS vs Android)
+            const ua = window.navigator.userAgent.toLowerCase();
+            const isIOS = /iphone|ipad|ipod/.test(ua);
+            const isAndroid = /android/.test(ua);
+            if (isIOS) {
+                const guideAnd = document.getElementById('guide-android');
+                if (guideAnd) guideAnd.classList.add('hidden');
+            } else if (isAndroid) {
+                const guideIos = document.getElementById('guide-ios');
+                if (guideIos) guideIos.classList.add('hidden');
+            }
+        }
+
+        // Enregistrement du Service Worker externe (sw.js) pour le fonctionnement hors-ligne sur serveur HTTPS
+        function registerDexformaServiceWorker() {
+            if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => console.log('Service Worker Dexforma CVC actif (Mode hors-ligne prêt).'))
+                    .catch((err) => console.warn('Enregistrement SW ignoré en local :', err));
+            }
+        }
+
+        // Initialisation au chargement
+        window.onload = function () {
+            checkStandaloneMode();
+            registerDexformaServiceWorker();
+            calculateAeraulique();
+            renderRsdtZones();
+            // Pré-remplissage léger du convertisseur pour démonstration immédiate
+            document.getElementById('conv-m3h').value = 1500;
+            convertFlow('m3h');
+            document.getElementById('conv-pa').value = 100;
+            convertPressure('pa');
+            document.getElementById('conv-kw').value = 10;
+            convertPower('kw');
+        };
+    </script>
+</body>
+</html>
