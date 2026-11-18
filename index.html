@@ -386,42 +386,72 @@
             <!-- ===================================================================== -->
             <section id="tab-rsdt" class="hidden space-y-4">
                 <div class="bg-dexCard border border-dexBorder rounded-2xl p-4 shadow-lg space-y-3">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between gap-2">
                         <div>
                             <h2 class="text-xs font-extrabold uppercase tracking-wider text-white">Débits Ventilation (RSDT & Cours)</h2>
                             <p class="text-[11px] text-slate-400">Dimensionnement air neuf & extraction tertiaire</p>
                         </div>
-                        <button type="button" onclick="loadCoworkingPreset()" class="px-2.5 py-1.5 rounded-lg bg-dexSurface hover:bg-slate-700 border border-dexBorder text-[11px] font-bold text-dexCyan">
-                            Exemple Coworking
-                        </button>
-                    </div>
-
-                    <!-- Ajout rapide d'une zone -->
-                    <div class="p-3 rounded-xl bg-dexBg border border-dexBorder space-y-2.5">
-                        <div class="grid grid-cols-1 gap-2">
-                            <label for="rsdt-preset-type" class="text-[11px] font-semibold text-slate-300">Ajouter un local / équipement :</label>
-                            <select id="rsdt-preset-type" class="w-full h-11 px-3 rounded-xl bg-dexSurface border border-dexBorder text-xs font-semibold text-white focus:outline-none focus:border-dexOrange">
-                                <option value="Open Space (Confort 30 m³/h)|30|false">Open Space / Bureau confort (30 m³/h / pers.)</option>
-                                <option value="Open Space (Max 35 m³/h)|35|false">Open Space / Bureau renforcé (35 m³/h / pers.)</option>
-                                <option value="Open Space (Min RSDT 25 m³/h)|25|false">Open Space / Bureau min. RSDT (25 m³/h / pers.)</option>
-                                <option value="Salle de réunion (40 m³/h)|40|false">Salle de réunion standard (40 m³/h / pers.)</option>
-                                <option value="Salle de réunion (45 m³/h)|45|false">Salle de réunion haute densité (45 m³/h / pers.)</option>
-                                <option value="WC (Règle 60 m³/h)|60|true">WC tertiaire (60 m³/h / WC)</option>
-                                <option value="WC isolé RSDT (30 m³/h)|30|true">WC isolé min. RSDT (30 m³/h / WC)</option>
-                                <option value="Salle de formation (18 m³/h)|18|false">Salle de formation / classe (18 m³/h / pers.)</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="flex-1">
-                                <input type="number" id="rsdt-qty" value="10" min="1" max="500" placeholder="Effectif / Qté" class="w-full h-11 px-3 rounded-xl bg-dexSurface border border-dexBorder text-white font-mono font-bold text-sm text-center focus:outline-none focus:border-dexOrange">
-                            </div>
-                            <button type="button" onclick="addRsdtZone()" class="h-11 px-4 rounded-xl bg-dexOrange hover:bg-dexOrangeHover text-white text-xs font-extrabold shadow flex items-center gap-1.5">
-                                <span>+ Ajouter</span>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button type="button" onclick="clearRsdtZones()" class="px-2 py-1.5 rounded-lg bg-dexBg hover:bg-red-950/40 border border-dexBorder text-[11px] font-bold text-slate-400 hover:text-red-400 transition-colors">
+                                Vider
+                            </button>
+                            <button type="button" onclick="loadCoworkingPreset()" class="px-2.5 py-1.5 rounded-lg bg-dexSurface hover:bg-slate-700 border border-dexBorder text-[11px] font-bold text-dexCyan transition-colors">
+                                Exemple
                             </button>
                         </div>
                     </div>
 
-                    <!-- Liste des zones ajoutées -->
+                    <!-- Ajout rapide d'une zone avec réglage personnalisé (Pers. ou m² + Taux) -->
+                    <div class="p-3 rounded-xl bg-dexBg border border-dexBorder space-y-2.5">
+                        <div class="grid grid-cols-1 gap-2">
+                            <label for="rsdt-preset-type" class="text-[11px] font-semibold text-slate-300">Ajouter un local / équipement :</label>
+                            <select id="rsdt-preset-type" onchange="onRsdtPresetChange()" class="w-full h-11 px-3 rounded-xl bg-dexSurface border border-dexBorder text-xs font-semibold text-white focus:outline-none focus:border-dexOrange">
+                                <option value="Open Space / Bureau|30|pers|false">Open Space / Bureau confort (30 m³/h / pers.)</option>
+                                <option value="Open Space (Renforcé)|35|pers|false">Open Space / Bureau renforcé (35 m³/h / pers.)</option>
+                                <option value="Bureau (Min. RSDT)|25|pers|false">Open Space / Bureau min. RSDT (25 m³/h / pers.)</option>
+                                <option value="Salle de réunion|40|pers|false">Salle de réunion standard (40 m³/h / pers.)</option>
+                                <option value="Salle de réunion (Haute densité)|45|pers|false">Salle de réunion haute densité (45 m³/h / pers.)</option>
+                                <option value="WC tertiaire|60|WC|true">WC tertiaire (60 m³/h / WC)</option>
+                                <option value="WC isolé (Min. RSDT)|30|WC|true">WC isolé min. RSDT (30 m³/h / WC)</option>
+                                <option value="Salle de formation|18|pers|false">Salle de formation / classe (18 m³/h / pers.)</option>
+                                <option value="Local tertiaire (au m²)|2.5|m²|false">Local tertiaire / Commerce (2.5 m³/h / m²)</option>
+                                <option value="Circulation / Archive (au m²)|1.5|m²|false">Circulation / Archive / Réserve (1.5 m³/h / m²)</option>
+                            </select>
+                        </div>
+
+                        <!-- Réglages libres : Quantité (pers. ou m²) + Taux unitaire modifiable -->
+                        <div class="grid grid-cols-12 gap-2 pt-0.5">
+                            <div class="col-span-6">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label for="rsdt-qty" id="rsdt-qty-label" class="text-[10px] font-semibold text-slate-400">Nb personnes</label>
+                                    <select id="rsdt-unit-select" onchange="onRsdtUnitChange()" class="bg-transparent text-[10px] font-mono font-bold text-dexCyan focus:outline-none cursor-pointer">
+                                        <option value="pers" class="bg-dexCard">pers.</option>
+                                        <option value="m²" class="bg-dexCard">m²</option>
+                                        <option value="WC" class="bg-dexCard">WC</option>
+                                    </select>
+                                </div>
+                                <input type="number" id="rsdt-qty" value="10" min="1" max="10000" step="1" class="w-full h-10 px-2.5 rounded-xl bg-dexSurface border border-dexBorder text-white font-mono font-bold text-sm text-center focus:outline-none focus:border-dexOrange">
+                            </div>
+
+                            <div class="col-span-6">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label for="rsdt-custom-rate" class="text-[10px] font-semibold text-slate-400">Débit unitaire</label>
+                                    <span id="rsdt-rate-unit-hint" class="text-[10px] font-mono text-slate-500">m³/h/pers.</span>
+                                </div>
+                                <input type="number" id="rsdt-custom-rate" value="30" min="0.1" max="5000" step="0.5" class="w-full h-10 px-2.5 rounded-xl bg-dexSurface border border-dexBorder text-dexCyan font-mono font-bold text-sm text-center focus:outline-none focus:border-dexOrange">
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="addRsdtZone()" class="w-full h-10 px-4 rounded-xl bg-dexOrange hover:bg-dexOrangeHover text-white text-xs font-extrabold shadow flex items-center justify-center gap-1.5 transition-colors">
+                            <span>+ Ajouter cette zone au calcul</span>
+                        </button>
+                    </div>
+
+                    <!-- Liste des zones ajoutées (avec édition directe du nombre de personnes / m²) -->
+                    <div class="flex items-center justify-between pt-1">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Zones du projet (quantités modifiables)</span>
+                        <span id="rsdt-zones-count" class="text-[10px] font-mono text-slate-500">5 zones</span>
+                    </div>
                     <div id="rsdt-zones-list" class="space-y-2">
                         <!-- Rempli dynamiquement par JS -->
                     </div>
@@ -1030,26 +1060,91 @@
         // Cas pratique Module 5 aligné sur le corrigé du cours :
         // Open space (25 pers × 30 m³/h = 750), Salles réunion (10+12+15 × 40 m³/h = 1 480), WC (3 × 60 m³/h = 180)
         let rsdtZones = [
-            { id: 1, name: 'Open Space', rate: 30, qty: 25, isSanitary: false },
-            { id: 2, name: 'Salle de réunion 1', rate: 40, qty: 10, isSanitary: false },
-            { id: 3, name: 'Salle de réunion 2', rate: 40, qty: 12, isSanitary: false },
-            { id: 4, name: 'Salle de réunion 3', rate: 40, qty: 15, isSanitary: false },
-            { id: 5, name: 'Sanitaires (3 WC)', rate: 60, qty: 3, isSanitary: true }
+            { id: 1, name: 'Open Space', rate: 30, qty: 25, unit: 'pers.', isSanitary: false },
+            { id: 2, name: 'Salle de réunion 1', rate: 40, qty: 10, unit: 'pers.', isSanitary: false },
+            { id: 3, name: 'Salle de réunion 2', rate: 40, qty: 12, unit: 'pers.', isSanitary: false },
+            { id: 4, name: 'Salle de réunion 3', rate: 40, qty: 15, unit: 'pers.', isSanitary: false },
+            { id: 5, name: 'Sanitaires (WC)', rate: 60, qty: 3, unit: 'WC', isSanitary: true }
         ];
         let rsdtFinalFlow = 1853;
 
+        function onRsdtPresetChange() {
+            const parts = document.getElementById('rsdt-preset-type').value.split('|');
+            const defaultRate = parseFloat(parts[1]) || 30;
+            const unit = parts[2] || 'pers';
+
+            document.getElementById('rsdt-custom-rate').value = defaultRate;
+            document.getElementById('rsdt-unit-select').value = unit;
+            onRsdtUnitChange();
+
+            // Ajuster une valeur par défaut cohérente si on passe en m²
+            const qtyInput = document.getElementById('rsdt-qty');
+            if (unit === 'm²' && parseFloat(qtyInput.value) <= 30) {
+                qtyInput.value = 100;
+            } else if (unit === 'WC' && parseFloat(qtyInput.value) > 10) {
+                qtyInput.value = 2;
+            } else if (unit === 'pers' && parseFloat(qtyInput.value) >= 80) {
+                qtyInput.value = 15;
+            }
+        }
+
+        function onRsdtUnitChange() {
+            const unit = document.getElementById('rsdt-unit-select').value;
+            const labelEl = document.getElementById('rsdt-qty-label');
+            const hintEl = document.getElementById('rsdt-rate-unit-hint');
+
+            if (unit === 'm²') {
+                labelEl.textContent = 'Surface (m²)';
+                hintEl.textContent = 'm³/h/m²';
+            } else if (unit === 'WC') {
+                labelEl.textContent = 'Nombre de WC';
+                hintEl.textContent = 'm³/h/WC';
+            } else {
+                labelEl.textContent = 'Nb personnes';
+                hintEl.textContent = 'm³/h/pers.';
+            }
+        }
+
         function addRsdtZone() {
             const rawPreset = document.getElementById('rsdt-preset-type').value.split('|');
-            const qty = Math.max(1, parseInt(document.getElementById('rsdt-qty').value) || 1);
+            const qty = Math.max(0.1, parseFloat(document.getElementById('rsdt-qty').value) || 1);
+            const customRate = Math.max(0.1, parseFloat(document.getElementById('rsdt-custom-rate').value) || parseFloat(rawPreset[1]));
+            const unitRaw = document.getElementById('rsdt-unit-select').value;
+            const displayUnit = unitRaw === 'pers' ? 'pers.' : unitRaw;
+
             rsdtZones.push({
                 id: Date.now(),
                 name: rawPreset[0],
-                rate: parseFloat(rawPreset[1]),
+                rate: customRate,
                 qty: qty,
-                isSanitary: rawPreset[2] === 'true'
+                unit: displayUnit,
+                isSanitary: rawPreset[3] === 'true'
             });
             renderRsdtZones();
-            showToast("Zone ajoutée au bilan aéraulique");
+            showToast(`Zone ajoutée (${qty} ${displayUnit} × ${customRate} m³/h)`);
+        }
+
+        function updateRsdtZoneQty(id, newVal) {
+            const parsed = parseFloat(newVal);
+            if (isNaN(parsed) || parsed < 0) return;
+            const zone = rsdtZones.find(z => z.id === id);
+            if (zone) {
+                zone.qty = parsed;
+                // Mettre à jour uniquement le sous-total de la ligne sans perdre le focus de saisie
+                const flowEl = document.getElementById(`zone-flow-${id}`);
+                if (flowEl) {
+                    flowEl.textContent = `${Math.round(zone.rate * zone.qty).toLocaleString('fr-FR')} m³/h`;
+                }
+                calculateRsdt();
+            }
+        }
+
+        function stepRsdtZoneQty(id, delta) {
+            const zone = rsdtZones.find(z => z.id === id);
+            if (!zone) return;
+            const stepSize = zone.unit === 'm²' ? (delta * 10) : delta;
+            zone.qty = Math.max(0, Math.round((zone.qty + stepSize) * 10) / 10);
+            renderRsdtZones();
         }
 
         function removeRsdtZone(id) {
@@ -1057,13 +1152,19 @@
             renderRsdtZones();
         }
 
+        function clearRsdtZones() {
+            rsdtZones = [];
+            renderRsdtZones();
+            showToast("Liste des zones vidée");
+        }
+
         function loadCoworkingPreset() {
             rsdtZones = [
-                { id: 1, name: 'Open Space', rate: 30, qty: 25, isSanitary: false },
-                { id: 2, name: 'Salle de réunion 1', rate: 40, qty: 10, isSanitary: false },
-                { id: 3, name: 'Salle de réunion 2', rate: 40, qty: 12, isSanitary: false },
-                { id: 4, name: 'Salle de réunion 3', rate: 40, qty: 15, isSanitary: false },
-                { id: 5, name: 'Sanitaires (3 WC)', rate: 60, qty: 3, isSanitary: true }
+                { id: 1, name: 'Open Space', rate: 30, qty: 25, unit: 'pers.', isSanitary: false },
+                { id: 2, name: 'Salle de réunion 1', rate: 40, qty: 10, unit: 'pers.', isSanitary: false },
+                { id: 3, name: 'Salle de réunion 2', rate: 40, qty: 12, unit: 'pers.', isSanitary: false },
+                { id: 4, name: 'Salle de réunion 3', rate: 40, qty: 15, unit: 'pers.', isSanitary: false },
+                { id: 5, name: 'Sanitaires (WC)', rate: 60, qty: 3, unit: 'WC', isSanitary: true }
             ];
             document.getElementById('rsdt-sim-slider').value = 0.75;
             renderRsdtZones();
@@ -1072,20 +1173,49 @@
 
         function renderRsdtZones() {
             const list = document.getElementById('rsdt-zones-list');
+            const countEl = document.getElementById('rsdt-zones-count');
+            if (countEl) {
+                countEl.textContent = `${rsdtZones.length} zone${rsdtZones.length > 1 ? 's' : ''}`;
+            }
+
             if (rsdtZones.length === 0) {
-                list.innerHTML = `<div class="text-center py-3 text-xs text-slate-500">Aucune zone ajoutée. Utilisez le formulaire ci-dessus.</div>`;
+                list.innerHTML = `<div class="text-center py-4 px-3 rounded-xl bg-dexBg/60 border border-dashed border-dexBorder text-xs text-slate-400">Aucune zone définie. Sélectionnez un type de local ci-dessus et saisissez le nombre de personnes ou les m².</div>`;
             } else {
                 list.innerHTML = rsdtZones.map(z => {
-                    const flow = z.rate * z.qty;
+                    const flow = Math.round(z.rate * z.qty);
+                    const unitBadge = z.unit || 'pers.';
                     return `
-                        <div class="p-2.5 rounded-xl bg-dexBg border border-dexBorder flex items-center justify-between gap-2">
-                            <div>
-                                <div class="text-xs font-bold text-white">${z.name}</div>
-                                <div class="text-[10px] font-mono text-slate-400">${z.qty} × ${z.rate} m³/h ${z.isSanitary ? '• <span class="text-dexCyan">Sanitaire (100%)</span>' : ''}</div>
+                        <div class="p-2.5 rounded-xl bg-dexBg border border-dexBorder space-y-2">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <div class="text-xs font-bold text-white leading-tight">${z.name}</div>
+                                    <div class="text-[10px] font-mono text-slate-400 mt-0.5">
+                                        Base : ${z.rate} m³/h/${unitBadge} ${z.isSanitary ? '• <span class="text-dexCyan">Sanitaire (100%)</span>' : ''}
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <span id="zone-flow-${z.id}" class="text-xs font-mono font-extrabold text-dexOrange">${flow.toLocaleString('fr-FR')} m³/h</span>
+                                    <button type="button" onclick="removeRsdtZone(${z.id})" title="Supprimer cette ligne" class="w-6 h-6 rounded-lg bg-dexSurface text-slate-400 hover:text-red-400 flex items-center justify-center text-xs font-bold transition-colors">×</button>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-2.5">
-                                <span class="text-xs font-mono font-extrabold text-dexOrange">${flow.toLocaleString('fr-FR')} m³/h</span>
-                                <button type="button" onclick="removeRsdtZone(${z.id})" class="w-6 h-6 rounded-lg bg-dexSurface text-slate-400 hover:text-red-400 flex items-center justify-center text-xs font-bold">×</button>
+
+                            <!-- Contrôle interactif direct du nombre de personnes / m² -->
+                            <div class="flex items-center justify-between pt-1.5 border-t border-dexBorder/50">
+                                <span class="text-[10px] font-semibold text-slate-400">
+                                    ${unitBadge === 'm²' ? 'Surface du local :' : (unitBadge === 'WC' ? 'Nombre de WC :' : 'Effectif (pers.) :')}
+                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" onclick="stepRsdtZoneQty(${z.id}, -1)" class="w-7 h-7 rounded-lg bg-dexSurface active:bg-slate-700 border border-dexBorder text-white font-mono font-bold text-xs flex items-center justify-center select-none">
+                                        -
+                                    </button>
+                                    <div class="relative flex items-center">
+                                        <input type="number" value="${z.qty}" min="0" step="${unitBadge === 'm²' ? '5' : '1'}" oninput="updateRsdtZoneQty(${z.id}, this.value)" class="w-16 h-7 px-1.5 rounded-lg bg-dexSurface border border-dexBorder text-white font-mono font-bold text-xs text-center focus:outline-none focus:border-dexOrange">
+                                    </div>
+                                    <span class="text-[10px] font-mono text-dexCyan w-9">${unitBadge}</span>
+                                    <button type="button" onclick="stepRsdtZoneQty(${z.id}, 1)" class="w-7 h-7 rounded-lg bg-dexSurface active:bg-slate-700 border border-dexBorder text-white font-mono font-bold text-xs flex items-center justify-center select-none">
+                                        +
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `;
